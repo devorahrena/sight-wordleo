@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>Sight Wordle</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="stylesheet.css">
+  <script type="text/javascript" src="confetti.js"></script>
+</head>
+
+<body onload="initialize()">
+  <div id="alphabet">
+    <div class="alphabet-row">
+      <div id="a" class="alphabet">a</div>
+      <div id="b" class="alphabet">b</div>
+      <div id="c" class="alphabet">c</div>
+      <div id="d" class="alphabet">d</div>
+      <div id="e" class="alphabet">e</div>
+      <div id="f" class="alphabet">f</div>
+    </div><div class="alphabet-row">
+      <div id="g" class="alphabet">g</div>
+      <div id="h" class="alphabet">h</div>
+      <div id="i" class="alphabet">i</div>
+      <div id="j" class="alphabet">j</div>
+      <div id="k" class="alphabet">k</div>
+      <div id="l" class="alphabet">l</div>
+    </div><div class="alphabet-row">
+      <div id="m" class="alphabet">m</div>
+      <div id="n" class="alphabet">n</div>
+      <div id="o" class="alphabet">o</div>
+      <div id="p" class="alphabet">p</div>
+      <div id="q" class="alphabet">q</div>
+      <div id="r" class="alphabet">r</div>
+      <div id="s" class="alphabet">s</div>
+    </div><div class="alphabet-row">
+      <div id="t" class="alphabet">t</div>
+      <div id="u" class="alphabet">u</div>
+      <div id="v" class="alphabet">v</div>
+      <div id="w" class="alphabet">w</div>
+      <div id="x" class="alphabet">x</div>
+      <div id="y" class="alphabet">y</div>
+      <div id="z" class="alphabet">z</div>
+    </div>
+  </div>
+  <div id="game">
+    <p id="answer" hidden>
+    <div id="board"></div>
+
+  <script>
+    function initialize() {
+      const words = ["leo"]
+      var answer = words[Math.floor(Math.random() * words.length)];
+      document.getElementById("answer").innerHTML = answer;
+      addNewRow(0);
+      document.getElementById("0a").focus();
+    }
+
+    function moveCursor(id) {
+      var counter = id.substr(0, id.length - 1);
+      var index = id[id.length - 1];
+      var key = event.keyCode || event.charCode;
+      event.preventDefault();
+      if (key == 8 || key == 46) {
+        if (document.getElementById(id).value.length == 0) {
+          if (index == "b") {
+            document.getElementById(counter + "a").focus();
+          } else if (index == "c") {
+            document.getElementById(counter + "b").focus();
+          }
+        } else {
+          document.getElementById(id).value = "";
+        }
+      } else if (key == 13) {
+        checkGuess(id);
+      } else if (index === "a") {
+        document.getElementById(counter + "a").value = String.fromCharCode(key).toLowerCase();
+        document.getElementById(counter + "b").focus();
+      } else if (index == "b") {
+        document.getElementById(counter + "b").value = String.fromCharCode(key).toLowerCase();
+        document.getElementById(counter + "c").focus();
+      } else {
+        document.getElementById(counter + "c").value = String.fromCharCode(key).toLowerCase();
+      }
+      //document.getElementById(id).nextSibling.focus();
+    }
+
+    function checkLetter(counter, index) {
+      var letter = document.getElementById(counter + index);
+      var answer = document.getElementById("answer").innerText;
+      var green = (index == "a" ? answer[0] : (index == "b" ? answer[1] : answer[2]));
+      var yellow = (index == "a" ? answer[1] + answer[2] : (index == "b" ? answer[0] + answer[2] : answer[0] + answer[1]));
+      var val = letter.value;
+      var alphabetCell = document.getElementById(val)
+      letter.defaultValue = val;
+      letter.disabled = true;
+      if (val == green) {
+        letter.style.backgroundColor = "green";
+        alphabetCell.style.backgroundColor = "green";
+        return 1;
+      } else if (val == yellow[0] || val == yellow[1]) {
+        letter.style.backgroundColor = "yellow";
+        alphabetCell.style.backgroundColor = "yellow";
+      } else {
+        letter.style.backgroundColor = "white";
+        alphabetCell.style.backgroundColor = "gray";
+      }
+      return 0;
+    }
+
+    function checkGuess(id) {
+      var counter = id.substr(0, id.length - 1);
+      var a = checkLetter(counter, "a");
+      var b = checkLetter(counter, "b");
+      var c = checkLetter(counter, "c");
+      if (a + b + c == 3) {
+        confetti();
+      } else {
+        counter++;
+        addNewRow(counter);
+        document.getElementById(counter + "a").focus();
+      }
+    }
+
+    function addNewRow(counter) {
+      var board = document.getElementById("board");
+      board.innerHTML += '<div class="row"><input id="' + counter + 'a" type="text" maxlength="1" onkeydown="moveCursor(this.id)"></input><input id="' + counter + 'b" type="text" maxlength="1" onkeydown="moveCursor(this.id)"></input><input id="' + counter + 'c" type="text" maxlength="1" onkeydown="moveCursor(this.id)"></input></div>'
+    }
+    
+  </script>
+</body>
+
+</html>
